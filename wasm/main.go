@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"os"
 	"syscall/js"
 	"unicode/utf8"
@@ -83,6 +82,9 @@ func execute(jsdoc js.Value, program [][2]int) {
 	ptr = 0
 	memory = [mem_size]uint8{}
 
+	rect_size := 15
+	pixel_size := 32
+
 	canvas := jsdoc.Call("getElementById", "canvas")
 	ctx := canvas.Call("getContext", "2d")
 
@@ -108,7 +110,7 @@ func execute(jsdoc js.Value, program [][2]int) {
 		"maroon",
 		"green",
 		"olive",
-		"qauqmarine",
+		"aquamarine",
 	}
 
 	for i := 0; i < len(program); i++ {
@@ -139,8 +141,7 @@ func execute(jsdoc js.Value, program [][2]int) {
 
 		case output:
 			ctx.Set("fillStyle", colors[int(memory[ptr])%len(colors)])
-			ctx.Call("fillRect", ptr%60*10, ptr/60*10, 10, 10)
-			fmt.Printf("%d, %d", ptr%60, ptr/60)
+			ctx.Call("fillRect", ptr%pixel_size*rect_size, ptr/pixel_size*rect_size, rect_size, rect_size)
 
 		case input:
 			in := bufio.NewReader(os.Stdin)
