@@ -22,7 +22,7 @@ const (
 	loop_end
 )
 
-const mem_size int = 30000
+const mem_size int = 1024
 
 var ptr int = 0
 var memory [mem_size]uint8 = [mem_size]uint8{}
@@ -82,8 +82,8 @@ func execute(jsdoc js.Value, program [][2]int) {
 	ptr = 0
 	memory = [mem_size]uint8{}
 
-	rect_size := 15
-	pixel_size := 32
+	rect_size := 20
+	pixel_size := 16
 
 	canvas := jsdoc.Call("getElementById", "canvas")
 	ctx := canvas.Call("getContext", "2d")
@@ -91,6 +91,7 @@ func execute(jsdoc js.Value, program [][2]int) {
 	ctx.Call("clearRect", 0, 0, canvas.Get("width"), canvas.Get("height"))
 
 	colors := []string{
+		"white",
 		"red",
 		"cyan",
 		"blue",
@@ -101,7 +102,6 @@ func execute(jsdoc js.Value, program [][2]int) {
 		"lime",
 		"magenta",
 		"pink",
-		"white",
 		"silver",
 		"gray",
 		"black",
