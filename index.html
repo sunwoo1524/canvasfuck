@@ -19,8 +19,9 @@
     <h1>Canvasfuck (in Go WebAssembly)</h1>
     <main>
         <canvas id="canvas" width="256" height="256"></canvas>
-        <textarea id="code"></textarea>
-        <button class="draw-btn", onclick="executeBf(code_textarea.value)">Draw!</button>
+        <input id="stdinput" placeholder="Input">
+        <textarea id="code" placeholder="Code"></textarea>
+        <button class="draw-btn", onclick="executeBf(code_textarea.value, stdinput.value)">Draw!</button>
     </main>
 </body>
 <script src="scripts/index.js"></script>

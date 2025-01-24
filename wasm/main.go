@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"errors"
-	"os"
 	"syscall/js"
 	"unicode/utf8"
 )
@@ -22,10 +20,7 @@ const (
 	loop_end
 )
 
-const mem_size int = 1024
-
-var ptr int = 0
-var memory [mem_size]uint8 = [mem_size]uint8{}
+const mem_size int = 30000
 
 func main() {
 	js.Global().Set("executeBf", Run())
@@ -78,9 +73,12 @@ func compile(code string) (compiled [][2]int, err error) {
 	return
 }
 
-func execute(jsdoc js.Value, program [][2]int) {
-	ptr = 0
-	memory = [mem_size]uint8{}
+func execute(jsdoc js.Value, program [][2]int, stdinput string) {
+	ptr := 0
+	memory := [mem_size]uint8{}
+	input_index := 0
+	// ptr = 0
+	// memory = [mem_size]uint8{}
 
 	rect_size := 20
 	pixel_size := 16
@@ -144,9 +142,10 @@ func execute(jsdoc js.Value, program [][2]int) {
 			ctx.Call("fillRect", ptr%pixel_size*rect_size, ptr/pixel_size*rect_size, rect_size, rect_size)
 
 		case input:
-			in := bufio.NewReader(os.Stdin)
-			line, _ := in.ReadString('\n')
-			memory[ptr] = []byte(line)[0]
+			if input_index < len(stdinput) {
+				memory[ptr] = byte(stdinput[input_index])
+				input_index++
+			}
 
 		case loop_start:
 			if memory[ptr] == 0 {
@@ -163,7 +162,7 @@ func execute(jsdoc js.Value, program [][2]int) {
 
 func Run() js.Func {
 	jsfunc := js.FuncOf(func(this js.Value, args []js.Value) any {
-		if len(args) != 1 {
+		if len(args) != 2 {
 			return "invalid arguments"
 		}
 
@@ -175,7 +174,7 @@ func Run() js.Func {
 			panic(err)
 		}
 
-		execute(doc, program)
+		execute(doc, program, args[1].String())
 
 		return nil
 	})
